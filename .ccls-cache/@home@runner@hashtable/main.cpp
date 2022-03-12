@@ -5,8 +5,10 @@
  */
 
 #include <iostream>
+#include <fstream>
 #include <cstring>
 #include <iomanip>
+
 
 using namespace::std;
 
@@ -52,6 +54,12 @@ int main() {
       }
   }*/
 
+  ofstream first;
+  first.open("first.txt");
+  char* firstArr[50];
+  char* name;
+  first.getline(name, 80)
+  
   Student* a = new Student();
   strcpy(a->first, "Max");
   strcpy(a->last, "Shi");
@@ -88,7 +96,14 @@ int main() {
 
 void random(Student* table[])
 {
-  
+  int number = 0;
+  cout << "Enter number of students to generate: ";
+  cin >> number;
+
+  for (int i = 0; i < number; i++)
+    {
+      
+    }
 }
 
 int hashFun(Student* s, int arraySize)
