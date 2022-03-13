@@ -5,24 +5,14 @@
  */
 
 #include <iostream>
-#include <fstream>
-#include <cstring>
-#include <iomanip>
+	@@ -11,7 +11,6 @@
 #include <ctime>
 #include <cstdlib>
 
 using namespace::std;
 
 struct Student {
-  char first[80];
-  char last[80];
-  int id;
-  float gpa;
-};
-
-struct node
-{
-  Student* s;
+	@@ -27,45 +26,29 @@ struct node
   node* next;
 };
 
@@ -52,8 +42,7 @@ int main() {
   fstream last;
   last.open("last.txt");
   char lastArr[100][30];
-  for(int i = 0; i < 100; i++)
-    {
+	@@ -74,115 +57,240 @@ int main() {
       last.getline(name, 30, '\n');
       strcpy(lastArr[i], name);
     }
@@ -66,8 +55,8 @@ int main() {
   for(int i = 0; i< 100; i++)
   {
     tablePtr[i] = NULL; //sets each position of array to NULL
-  } 
-  
+  }
+
   while(true) {
     char input[80];
     cout << "ADD, PRINT, DELETE, GENERATE, QUIT\n";
@@ -95,7 +84,7 @@ int main() {
       strcpy(s->last, last);
       s->id = id;
       s->gpa = gpa;
-      
+
       rehash = add(s, tablePtr, arraySize);
     }
     else if (strcmp(input, "PRINT") == 0)
@@ -160,19 +149,12 @@ bool random(node* table[], int arraySize, char firstNames[][30], char lastNames[
 int hashFun(int id, int arraySize)
 {
   return (id)%arraySize;
-
-int hashFun(int id, int arraySize)
-{
-  return (id)%arraySize;
-  
->>>>>>> origin/main
 }
 
 //adds a student to a hash table
 bool add(Student* s, node* table[], int arraySize)
 {
   int index = hashFun(s->id, arraySize);
-
 
   //create new node
   node* n = new node();
@@ -241,29 +223,12 @@ void deleteNode(node* &head, node* previous, node* current, int id)
 {
   if(head == NULL){
     //do nothing
-void del(node* table[], int arraySize, int id)
-{
-  int index = hashFun(id, arraySize);
-  deleteNode(table[index], table[index], table[index], id);
-      
-}
-
-void deleteNode(node* &head, node* previous, node* current, int id)
-{
-  if(head == NULL){
-    
->>>>>>> origin/main
   }
   else if(head->s->id == id)
   {
     node* temp = head;
-
     head = head->next; //move head to next
     delete temp; //delete old head
-
-    head = head->next;
-    delete temp;
-
     deleteNode(head, head, head, id);
   }
   else if(current == NULL)
@@ -273,10 +238,6 @@ void deleteNode(node* &head, node* previous, node* current, int id)
   else if(current->s->id == id)
   {
     previous->next = current->next; //previous connects to what is after current
-  }
-  else if(current->s->id == id)
-  {
-    previous->next = current->next;
     delete current;
     deleteNode(head, previous, previous->next, id);
   }
@@ -291,14 +252,6 @@ bool copy(node* newTable[], node* oldTable[], int newSize)
 {
   bool rehash = false;
   int collisionsGreaterThan3 = 0; //counts how many times there are more than 3 collisions
-    deleteNode(head, current, current->next, id);
-  }
-}
-
-bool copy(node* newTable[], node* oldTable[], int newSize)
-{
-  bool rehash = false;
-  int collisionsGreaterThan3 = 0;
   for(int i = 0; i < newSize/2; i++)
     {
       if(oldTable[i] != NULL)
@@ -309,7 +262,6 @@ bool copy(node* newTable[], node* oldTable[], int newSize)
         {
           collisionsGreaterThan3++;
         }
-
 
         //adds the rest of nodes
         node* current = oldTable[i]->next;
@@ -323,7 +275,7 @@ bool copy(node* newTable[], node* oldTable[], int newSize)
           current = current->next;
         }
       }
-      
+
     }
   if(collisionsGreaterThan3 > 0)
   {
