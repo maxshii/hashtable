@@ -27,35 +27,16 @@ struct node
   node* next;
 };
 
-void random(node* table[], int arraySize, char firstNames[][30], char lastNames[][30], int &id);
+bool random(node* table[], int arraySize, char firstNames[][30], char lastNames[][30], int &id);
 int hashFun(Student* s, int arraySize);
-void add(Student* s, node* table[], int arraySize);
+bool add(Student* s, node* table[], int arraySize);
 void print(node* table[], int arraySize);
-void del(Student* s);
+void del(node* table[], int arraySize, int id);
+void deleteNode(node* &head, node* previous, node* current, int id);
+bool copy(node* newTable[], node* oldTable[], int newSize);
 
 int main() {
   srand(time(NULL));
- /* while(true) {
-      char input[80];
-      cin.getline(input, 80, '\n');
-      if (strcmp(input, "ADD")==0)
-      {
-      }
-      else if (strcmp(input, "PRINT")==0)
-      {
-      }
-      else if (strcmp(input, "DELETE")==0)
-      {
-          int id = 0;
-          cout << "Enter ID: ";
-          cin >> id;
-      }
-      else if (strcmp(input, "QUIT")==0)
-      {
-          break;   
-      }
-  }*/
-
   fstream first;
   first.open("first.txt");
   char firstArr[50][30];
@@ -75,7 +56,7 @@ int main() {
       strcpy(lastArr[i], name);
     }
   
-    /*
+  
   Student* a = new Student();
   strcpy(a->first, "Max");
   strcpy(a->last, "Shi");
@@ -85,40 +66,102 @@ int main() {
   Student* b = new Student();
   strcpy(b->first, "Bob");
   strcpy(b->last, "Shi");
-  b->id = 1;
+  b->id = 0;
   b->gpa = 6.9;
 
   Student* c = new Student();
   strcpy(c->first, "Zob");
   strcpy(c->last, "Shi");
-  c->id = 1;
+  c->id = 100;
   c->gpa = 6.9;
-  add(a, table, arraySize);
-  add(b, table, arraySize);
-  add(c, table, arraySize);
-*/
-  node* table[100] = {NULL};
+ 
+
+
+  node* *tablePtr = new node*[100];
+  for(int i = 0; i< 100; i++)
+    {
+      tablePtr[i] = NULL;
+    }
+
+ 
+ 
+  int arraySize = 100;
 
   
-  int arraySize = *(&table+1) - table;
-
+  add(a, tablePtr, arraySize);
+  add(b, tablePtr, arraySize);
+  add(c, tablePtr, arraySize);
   
-
 
   int id = 0;
-  random(table, 100, firstArr, lastArr, id);
-  print(table, 100);
   
+  print(tablePtr, arraySize);
+
+  while(true) {
+    char input[80];
+    cout << "ADD, PRINT, DELETE, GENERATE, QUIT\n";
+    cin.getline(input, 80);
+    bool rehash = false;
+    if (strcmp(input, "ADD")==0)
+    {
+      char first[80];
+      char last[80];
+      int id;
+      float gpa;
+      cout << "Enter first name: ";
+      cin.getline(first, 80);
+      cout << "Enter last name: ";
+      cin.getline(last, 80);
+      cout << "Enter id: ";
+      cin >> id;
+      cin.ignore();
+      cout << "Enter gpa: ";
+      cin >> gpa;
+      cin.ignore();
+
+      Student* s = new Student();
+      strcpy(s->first, first);
+      strcpy(s->last, last);
+      s->id = id;
+      s->gpa = gpa;
       
+      rehash = add(s, tablePtr, arraySize);
+    }
+    else if (strcmp(input, "PRINT") == 0)
+    {
+      print(tablePtr, arraySize);
+    }
+    else if (strcmp(input, "DELETE") == 0)
+    {
+      int id = 0;
+      cout << "Enter ID: ";
+      cin >> id;
+      cin.ignore();
+      del(tablePtr, arraySize, id);
+    }
+    else if(strcmp(input, "GENERATE") == 0)
+    {
+      arraySize = arraySize * 2;
+      node* *temp = new node*[arraySize];
+      copy(temp, tablePtr, arraySize);
+      delete tablePtr;
+      tablePtr = temp;    
+    }
+    else if (strcmp(input, "QUIT") == 0)
+    {
+        break;   
+    }
+  }
   return 0;
 }
 
 bool random(node* table[], int arraySize, char firstNames[][30], char lastNames[][30], int &id)
 {
+  bool rehash = false;
   int number = 0;
   cout << "Enter number of students to generate: ";
   cin >> number;
-  cin.i
+  cin.ignore(100, '\n');
 
   for (int i = 0; i < number; i++)
     {
@@ -128,19 +171,20 @@ bool random(node* table[], int arraySize, char firstNames[][30], char lastNames[
       s->id = ++id;
       float newGpa = (rand() % 50)/10.0;
       s->gpa = newGpa;
-      add(s, table, arraySize);
+      rehash = add(s, table, arraySize);
     }
+  return rehash;
 }
 
-int hashFun(Student* s, int arraySize)
+int hashFun(int id, int arraySize)
 {
-  return (s->id)%arraySize;
+  return (id)%arraySize;
   
 }
 
 bool add(Student* s, node* table[], int arraySize)
 {
-  int index = hashFun(s, arraySize);
+  int index = hashFun(s->id, arraySize);
   node* n = new node();
   n->s = s;
   n->next = NULL;
@@ -157,7 +201,6 @@ bool add(Student* s, node* table[], int arraySize)
       {
         current = current->next;
         count++;
-        cout << count;
       }
     current->next = n;
   }
@@ -185,4 +228,73 @@ void print(node* table[], int arraySize)
         }
       }
     }
+}
+
+void del(node* table[], int arraySize, int id)
+{
+  int index = hashFun(id, arraySize);
+  deleteNode(table[index], table[index], table[index], id);
+      
+}
+
+void deleteNode(node* &head, node* previous, node* current, int id)
+{
+  if(head == NULL){
+    
+  }
+  else if(head->s->id == id)
+  {
+    node* temp = head;
+    head = head->next;
+    delete temp;
+    deleteNode(head, head, head, id);
+  }
+  else if(current == NULL)
+  {
+
+  }
+  else if(current->s->id == id)
+  {
+    previous->next = current->next;
+    delete current;
+    deleteNode(head, previous, previous->next, id);
+  }
+  else if(current->s->id != id)
+  {
+    deleteNode(head, current, current->next, id);
+  }
+}
+
+bool copy(node* newTable[], node* oldTable[], int newSize)
+{
+  bool rehash = false;
+  int collisionsGreaterThan3 = 0;
+  for(int i = 0; i < newSize/2; i++)
+    {
+      if(oldTable[i] != NULL)
+      {
+        rehash = add(oldTable[i]->s, newTable, newSize);
+        if (rehash == true)
+        {
+          collisionsGreaterThan3++;
+        }
+        
+        node* current = oldTable[i]->next;
+        while(current != NULL)
+        {
+          rehash = add(current->s, newTable, newSize);
+          if (rehash == true)
+          {
+            collisionsGreaterThan3++;
+          }
+          current = current->next;
+        }
+      }
+      
+    }
+  if(collisionsGreaterThan3 > 0)
+  {
+    return true;
+  }
+  return false;
 }
