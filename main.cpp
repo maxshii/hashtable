@@ -1,3 +1,4 @@
+
 /*
  * Program to implement hash table using an array of linked list nodes. Is able to rehash when there are more than 3 collisions.
  * By: Max Shi
@@ -5,14 +6,25 @@
  */
 
 #include <iostream>
-	@@ -11,7 +11,6 @@
+#include <fstream>
+#include <cstring>
+#include <iomanip>
 #include <ctime>
 #include <cstdlib>
+
 
 using namespace::std;
 
 struct Student {
-	@@ -27,45 +26,29 @@ struct node
+  char first[80];
+  char last[80];
+  int id;
+  float gpa;
+};
+
+struct node
+{
+  Student* s;
   node* next;
 };
 
@@ -42,11 +54,13 @@ int main() {
   fstream last;
   last.open("last.txt");
   char lastArr[100][30];
-	@@ -74,115 +57,240 @@ int main() {
+  for(int i = 0; i < 100; i++)
+    {
       last.getline(name, 30, '\n');
       strcpy(lastArr[i], name);
     }
-
+  
+  
   int arraySize = 100; //initial size of array
   int id = 0; //starting id for student generator
 
@@ -57,7 +71,7 @@ int main() {
     tablePtr[i] = NULL; //sets each position of array to NULL
   }
 
-  while(true) {
+ while(true) {
     char input[80];
     cout << "ADD, PRINT, DELETE, GENERATE, QUIT\n";
     cin.getline(input, 80);
